@@ -115,17 +115,25 @@ for idx, row in full_df.iterrows():
         else "unknown"
     )
 
-    audio, sr = librosa.load(file_path, sr=16000)
+    try:
+        audio, sr = librosa.load(file_path, sr=16000)
+    except Exception as e:
+        print(f"Error loading {file_path}: {e}")
+        continue
 
     for aug_name, aug_fn in AUGMENTATIONS.items():
-        augmented = aug_fn(audio, sr)
-        mel_resized = make_spectrogram(augmented, sr)
+        try:
+            augmented = aug_fn(audio, sr)
+            mel_resized = make_spectrogram(augmented, sr)
 
-        out_name = f"spectrograms/{record_id}_{age}_{gender}_{diagnosis}_{aug_name}.png"
-        plt.imsave(out_name, mel_resized, cmap="magma")
+            out_name = f"spectrograms/{record_id}_{idx}_{age}_{gender}_{diagnosis}_{aug_name}.png"
+            plt.imsave(out_name, mel_resized, cmap="magma")
 
-        count += 1
-        if count % 50 == 0:
-            print(f"Progress: {count}/{total} augmented spectrograms saved")
+            count += 1
+            if count % 50 == 0:
+                print(f"Progress: {count}/{total} augmented spectrograms saved")
+        except Exception as e:
+            print(f"Error processing {record_id} with {aug_name}: {e}")
+            continue
 
 print(f"Done. Generated {count} augmented spectrograms from {len(full_df)} original samples.")
