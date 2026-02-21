@@ -5,18 +5,19 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import glob
 import os
+
 diagnosis_df = pd.read_csv(
-    r"C:\VSCode\Hacklytics_2026\Data\2017_Database\Respiratory_Sound_Database\Respiratory_Sound_Database\patient_diagnosis.csv",
+    r"Data/2017_Database/Respiratory_Sound_Database/Respiratory_Sound_Database/patient_diagnosis.csv",
     header=None,
     names=["PatientID", "Diagnosis"]
 )
 
 icbhi_files = glob.glob(
-    r"C:\VSCode\Hacklytics_2026\Data\2017_Database\Respiratory_Sound_Database\Respiratory_Sound_Database\audio_and_txt_files\*.wav"
+    r"Data/2017_Database/Respiratory_Sound_Database/Respiratory_Sound_Database/audio_and_txt_files/*.wav"
 )
 
 second_files = glob.glob(
-    r"C:\VSCode\Hacklytics_2026\Data\Lung_Sound_Database\Audio Files\*.wav"
+    r"Data/Lung_Sound_Database/Audio Files/*.wav"
 )
 
 wav_files = icbhi_files + second_files
@@ -74,7 +75,7 @@ df_second[["RecordingID", "Diagnosis", "SoundType", "Location", "Age", "Gender"]
 full_df = pd.concat([df_icbhi, df_second], ignore_index=True)
 
 demo_df = pd.read_csv(
-    r"C:\VSCode\Hacklytics_2026\Data\2017_Database\demographic_info.txt",
+    r"Data/2017_Database/demographic_info.txt",
     sep=r"\s+",
     header=None,
     usecols=[0,1,2,3],
