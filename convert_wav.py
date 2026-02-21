@@ -96,7 +96,7 @@ for idx, row in full_df.iterrows():
     mel_db = librosa.power_to_db(mel, ref=np.max)
     mel_resized = cv2.resize(mel_db, (128, 128))
 
-    spectrogram_name = f"spectrograms/{record_id}_{age}_{gender}_{diagnosis}.png"
+    spectrogram_name = f"spectrograms/{record_id}_{idx}_{age}_{gender}_{diagnosis}.png"
     plt.imsave(spectrogram_name, mel_resized, cmap="magma")
 
 print("Final dataset shape:", full_df.shape)
