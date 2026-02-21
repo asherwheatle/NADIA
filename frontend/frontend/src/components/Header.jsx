@@ -10,7 +10,7 @@ export default function Header({ darkMode, setDarkMode }) {
       <h1 className="logo">Breathe</h1>
 
       <button
-        className="btn btn-toggle"
+        className="btn btn-toggle interactive"
         onClick={() => setDarkMode(!darkMode)}
       >
         {darkMode ? "Light Mode" : "Dark Mode"}
