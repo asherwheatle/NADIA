@@ -1,0 +1,427 @@
+/* ---------------------------------------------------
+   GLOBAL FONT OVERRIDE (Dosis everywhere)
+--------------------------------------------------- */
+* {
+  font-family: 'Dosis', sans-serif !important;
+}
+
+/* ---------------------------------------------------
+   TYPOGRAPHY VARIABLES
+--------------------------------------------------- */
+:root {
+  --font-primary: 'Dosis', sans-serif;
+
+  --h1-size: 3rem;
+  --h2-size: 2.2rem;
+  --h3-size: 1.6rem;
+  --body-size: 1.15rem;
+  --small-size: 0.95rem;
+
+  --light: 300;
+  --regular: 400;
+  --medium: 500;
+  --semibold: 600;
+}
+
+/* Calmer global letter spacing */
+body, p, span, button, input, label {
+  letter-spacing: 0.3px;
+}
+
+h1, h2, h3 {
+  letter-spacing: 1px;
+}
+
+/* ---------------------------------------------------
+   BODY + DARK MODE
+--------------------------------------------------- */
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: var(--body-size);
+  font-weight: var(--regular);
+  background-color: #BFCAB3;
+  color: #2F3E2C;
+  transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+body.dark-mode {
+  background-color: #1E2A23;
+  color: #E8F5E1;
+}
+
+/* ---------------------------------------------------
+   HEADER + BREATHING LOGO
+--------------------------------------------------- */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.logo {
+  font-size: 3rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  animation: breatheText 6s ease-in-out infinite;
+}
+
+@keyframes breatheText {
+  0% { letter-spacing: 1px; opacity: 0.85; }
+  50% { letter-spacing: 3px; opacity: 1; }
+  100% { letter-spacing: 1px; opacity: 0.85; }
+}
+
+/* ---------------------------------------------------
+   DARK MODE TOGGLE BUTTON
+--------------------------------------------------- */
+.btn-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.25);
+  color: #2F3E2C;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+body.dark-mode .btn-toggle {
+  background: rgba(255,255,255,0.15);
+  color: #E8F5E1;
+}
+
+/* ---------------------------------------------------
+   UNIVERSAL INTERACTIVE HOVER
+--------------------------------------------------- */
+.interactive {
+  transition: all 0.25s ease;
+}
+
+.interactive:hover {
+  transform: translateY(-3px);
+  opacity: 0.9;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+
+/* ---------------------------------------------------
+   PAGE FADE-IN
+--------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.app-container {
+  animation: fadeIn 0.9s ease-out;
+  max-width: 600px;
+  margin: auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------
+   BREATHING CIRCLE
+--------------------------------------------------- */
+.breath-circle {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 20px auto 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #8FAF9B, #6E8F76);
+  animation: breatheCircle 6s ease-in-out infinite;
+  box-shadow: 0 0 35px rgba(255,255,255,0.25);
+}
+
+/* Sphere turns red while recording */
+.breath-circle.recording {
+  background: radial-gradient(circle, #FF6B6B, #C94A4A);
+  box-shadow: 0 0 45px rgba(255, 80, 80, 0.6);
+}
+
+@keyframes breatheCircle {
+  0% { transform: scale(0.85); opacity: 0.75; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.85); opacity: 0.75; }
+}
+
+/* Glowing aura behind the sphere */
+.breath-circle::before {
+  content: "";
+  position: absolute;
+  inset: -25px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(143,175,155,0.35), rgba(110,143,118,0));
+  filter: blur(25px);
+  animation: auraPulse 6s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes auraPulse {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.15); opacity: 0.9; }
+  100% { transform: scale(0.9); opacity: 0.5; }
+}
+
+/* ---------------------------------------------------
+   MIC INSIDE SPHERE
+--------------------------------------------------- */
+.mic-inside {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #AFC7B3, #8FAF9B);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+  transition: all 0.25s ease;
+  animation: micPulseSync 6s ease-in-out infinite;
+}
+
+.mic-inside.recording {
+  background: rgba(255, 80, 80, 0.35);
+  box-shadow: 0 0 25px rgba(255, 80, 80, 0.6);
+}
+
+@keyframes micPulseSync {
+  0% { transform: translate(-50%, -50%) scale(0.85); }
+  50% { transform: translate(-50%, -50%) scale(1); }
+  100% { transform: translate(-50%, -50%) scale(0.85); }
+}
+
+/* ---------------------------------------------------
+   BUTTONS
+--------------------------------------------------- */
+.btn {
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  margin: 20px;
+  animation: breathe 4s ease-in-out infinite;
+  font-weight: var(--medium);
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+.btn-listen {
+  background: #7F9C82;
+  color: white;
+}
+
+.btn-submit {
+  background: #4F6F52;
+  color: white;
+}
+
+.btn:disabled {
+  background: #A8B8A5;
+  cursor: not-allowed;
+  transform: none;
+  animation: none;
+}
+
+body.dark-mode .btn-listen {
+  background: #3C5A45;
+}
+
+body.dark-mode .btn-submit {
+  background: #2E4A36;
+}
+
+/* ---------------------------------------------------
+   SOUND-REACTIVE VISUALIZER
+--------------------------------------------------- */
+.waveform-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  height: 80px;
+  margin-bottom: 30px;
+}
+
+.wave-bar {
+  width: 10px;
+  background: #7F9C82;
+  border-radius: 6px;
+  transition: height 0.15s ease-out;
+}
+
+body.dark-mode .wave-bar {
+  background: #4F6F52;
+}
+
+/* ---------------------------------------------------
+   RECORDING WAVEFORM
+--------------------------------------------------- */
+.recording-waveform {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  height: 90px;
+  margin: 30px 0;
+}
+
+.recording-bar {
+  width: 12px;
+  background: #7F9C82;
+  border-radius: 6px;
+  animation: recordingPulse 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+@keyframes recordingPulse {
+  0% { height: 20%; opacity: 0.7; }
+  50% { height: 90%; opacity: 1; }
+  100% { height: 20%; opacity: 0.7; }
+}
+
+body.dark-mode .recording-bar {
+  background: #4F6F52;
+}
+
+/* ---------------------------------------------------
+   GLASSMORPHISM CARD
+--------------------------------------------------- */
+.glass-card {
+  margin-top: 40px;
+  padding: 26px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  color: #2F3E2C;
+  animation: fadeIn 1.2s ease-out;
+}
+
+body.dark-mode .glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  color: #E8F5E1;
+}
+
+/* ---------------------------------------------------
+   LOADING SHIMMER + DOT LOADER
+--------------------------------------------------- */
+.loading-shimmer {
+  width: 100%;
+  height: 20px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.4) 50%,
+    rgba(255,255,255,0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerMove 1.5s infinite;
+  margin-top: 20px;
+}
+
+@keyframes shimmerMove {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.dot-loader {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  background: #4F6F52;
+  border-radius: 50%;
+  animation: dotPulse 1.2s infinite ease-in-out;
+}
+
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.6; }
+}
+
+/* ---------------------------------------------------
+   UPLOAD BUTTON
+--------------------------------------------------- */
+.upload-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-label {
+  padding: 14px 22px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #2F3E2C;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.upload-label input {
+  display: none;
+}
+
+body.dark-mode .upload-label {
+  background: rgba(255,255,255,0.15);
+  color: #E8F5E1;
+}
+
+.drop-zone {
+  margin: 20px auto;
+  padding: 30px;
+  width: 80%;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  border: 2px dashed rgba(255,255,255,0.4);
+  color: #2F3E2C;
+  transition: all 0.25s ease;
+}
+
+.drop-zone.dragging {
+  transform: translateY(-3px);
+  opacity: 0.9;
+  border-color: #7F9C82;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+
+body.dark-mode .drop-zone {
+  background: rgba(255,255,255,0.15);
+  color: #E8F5E1;
+  border-color: rgba(255,255,255,0.25);
+}
