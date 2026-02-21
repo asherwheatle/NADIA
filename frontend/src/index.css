@@ -425,3 +425,53 @@ body.dark-mode .drop-zone {
   color: #E8F5E1;
   border-color: rgba(255,255,255,0.25);
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-card {
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  padding: 30px;
+  border-radius: 18px;
+  width: 80%;
+  max-width: 450px;
+  color: #2F3E2C;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: fadeIn 0.25s ease;
+}
+
+.close-btn,
+.more-info-btn {
+  margin-top: 20px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.close-btn:hover,
+.more-info-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+.disclaimer {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  line-height: 1.4;
+  font-style: italic;
+}
