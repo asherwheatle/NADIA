@@ -71,34 +71,24 @@ class MetadataWeightNet(nn.Module):
         return self.projection(weighted)
 
 
-class PulmoScanModel(nn.Module):
-    def __init__(self, num_classes=NUM_CLASSES):
-        super().__init__()
-        self.cnn = models.efficientnet_b0(weights=None)
-        self.cnn.classifier = nn.Sequential(
-            nn.Dropout(p=0.3, inplace=True),
-            nn.Linear(1280, num_classes),
-        )
-        self.meta = MetadataWeightNet(meta_dim=2, num_classes=num_classes)
-
-    def forward(self, x, metadata):
-        cnn_logits = self.cnn(x)
-        meta_logits = self.meta(metadata)
-        return cnn_logits + meta_logits
-
-
 # ---------------------------------------------------------
 # Load weights
 # ---------------------------------------------------------
-model = PulmoScanModel().to(DEVICE)
+model = models.efficientnet_b0(weights=None)
+model.classifier = nn.Sequential(
+    nn.Dropout(p=0.3, inplace=True),
+    nn.Linear(1280, NUM_CLASSES)
+)
 
-cnn_state = torch.load("model/Trained_Weights.pth", map_location=DEVICE)
-meta_state = torch.load("model/metadata_weights.pth", map_location=DEVICE)
+meta_model = MetadataWeightNet()
 
-model.cnn.load_state_dict(cnn_state)
-model.meta.load_state_dict(meta_state)
+model.load_state_dict(torch.load("model/Trained_Weights.pth", map_location=DEVICE))
+meta_model.load_state_dict(torch.load("model/metadata_weights.pth", map_location=DEVICE))
 
 model.eval()
+meta_model.eval()
+model = model.to(DEVICE)
+meta_model = meta_model.to(DEVICE)
 
 # ---------------------------------------------------------
 # Spectrogram → Tensor
@@ -146,7 +136,7 @@ async def predict(file: UploadFile = File(...)):
     metadata = torch.tensor([[0.5, 0.5]], dtype=torch.float32).to(DEVICE)
 
     with torch.no_grad():
-        logits = model(x, metadata)
+        logits = model(x) + meta_model(metadata)
         probs = torch.sigmoid(logits).cpu().numpy()[0]
 
     # Pick top class
