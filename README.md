@@ -1,5 +1,157 @@
 # notadoctor
 
+## Project Overview
+
+A full-stack application for respiratory sound analysis and X-ray classification using deep learning. This repository includes audio processing pipelines, model inference, and a web-based frontend.
+
+## Dependencies
+
+### System Requirements
+- **Python**: 3.8 or higher
+- **Node.js**: 16 or higher
+- **npm** or **yarn**: For JavaScript dependency management
+
+### Python Dependencies
+
+#### Core Audio Processing (for local spectrogram generation)
+```bash
+pip install librosa numpy opencv-python matplotlib pandas
+```
+
+#### Machine Learning & Model Inference
+```bash
+pip install torch torchvision
+```
+
+#### Backend API
+```bash
+pip install fastapi python-multipart uvicorn
+```
+
+#### Image Processing & APIs
+```bash
+pip install pillow python-dotenv google-generativeai
+```
+
+#### Full Python Installation
+```bash
+pip install librosa numpy opencv-python matplotlib pandas torch torchvision fastapi python-multipart uvicorn pillow python-dotenv google-generativeai
+```
+
+### Frontend Dependencies (Node.js)
+- **React** 19.2.0
+- **React DOM** 19.2.0
+- **React Router** 7.13.0
+- **Vite** 7.3.1 (build tool)
+- **ESLint** 9.39.1
+
+Install with:
+```bash
+cd frontend
+npm install
+```
+
+### Backend Dependencies (Node.js)
+- **Express** 5.2.1
+- **CORS** 2.8.6
+- **Multer** 2.0.2 (file uploads)
+- **Axios** 1.13.5 (HTTP client)
+
+Install with:
+```bash
+cd backend/node
+npm install
+```
+
+### Environment Variables
+Create a `.env` file in the root directory for the X-ray analyzer:
+```
+GOOGLE_API_KEY=your_gemini_api_key_here
+```
+
+## Running the Application Locally
+
+### Prerequisites
+Ensure all dependencies are installed (see [Dependencies](#dependencies) section above).
+
+### 1. Set Up Python Virtual Environment
+
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate on Windows
+venv\Scripts\Activate.ps1
+
+# Activate on macOS/Linux
+source venv/bin/activate
+```
+
+### 2. Install Python Dependencies
+
+```bash
+pip install librosa numpy opencv-python matplotlib pandas torch torchvision fastapi python-multipart uvicorn pillow python-dotenv google-generativeai
+```
+
+### 3. Start the Python Backend (FastAPI)
+
+In a terminal (with virtual environment activated):
+
+```bash
+cd backend/python
+uvicorn app:app --reload --port 8000
+```
+
+The API will be available at `http://localhost:8000`
+
+### 4. Start the Node.js Backend (Express)
+
+In a separate terminal:
+
+```bash
+cd backend/node
+npm install  # if not already installed
+npm start    # or node server.js
+```
+
+The server will run on `http://localhost:5000` (or the port specified in `server.js`)
+
+### 5. Start the Frontend (React/Vite)
+
+In a separate terminal:
+
+```bash
+cd frontend
+npm install  # if not already installed
+npm run dev
+```
+
+The dev server will launch at `http://localhost:5173` (or another available port)
+
+### 6. Access the Application
+
+Open your browser and navigate to:
+```
+http://localhost:5173
+```
+
+### 3-Terminal Setup
+
+For optimal local development, keep all three servers running simultaneously:
+
+| Terminal 1 | Terminal 2 | Terminal 3 |
+|-----------|-----------|-----------|
+| `cd backend/python` | `cd backend/node` | `cd frontend` |
+| `uvicorn app:app --reload --port 8000` | `npm start` | `npm run dev` |
+| FastAPI (http://localhost:8000) | Express (http://localhost:5000) | React (http://localhost:5173) |
+
+### Troubleshooting
+
+- **Port already in use**: Change the port number in the startup commands or kill the process using the port
+- **Module not found errors**: Ensure virtual environment is activated and all pip packages are installed
+- **CORS errors**: Check that the backend middleware allows requests from `http://localhost:5173`
+- **API connection issues**: Verify the frontend is configured to hit `http://localhost:8000` or `http://localhost:5000` (depending on endpoint)
+
 # Rebuilding the Full Spectrogram Dataset Locally
 
 This repository includes the full pipeline used to convert `.wav` respiratory audio recordings into 128×128 Mel spectrograms with normalized metadata.  
