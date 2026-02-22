@@ -12,7 +12,7 @@ import useDecibelMeter from "../hooks/useDecibelMeter.js";
 import { normalizeAudio } from "../utils/audioUtils.js";
 import { useState } from "react";
 
-export default function Record() {
+export default function Record({ onNewResult }) {
   const [listening, setListening] = useState(false);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,27 +34,31 @@ export default function Record() {
     setResult(null);
   };
 
-  const handleSubmit = () => {
-    setListening(false);
-    setLoading(true);
-    setResult(null);
+const handleSubmit = () => {
+  setListening(false);
+  setLoading(true);
+  setResult(null);
 
-    setTimeout(() => {
-      setLoading(false);
+  setTimeout(() => {
+    setLoading(false);
 
-      if (uploadedFile) {
-        setResult({
-          label: "Uploaded File Analyzed",
-          confidence: 88
-        });
-      } else {
-        setResult({
-          label: "Normal Breath Sound",
-          confidence: 92
-        });
-      }
-    }, 2000);
-  };
+    if (uploadedFile) {
+      const newResult = {
+        label: "Uploaded File Analyzed",
+        confidence: 88
+      };
+      setResult(newResult);
+      onNewResult(newResult);
+    } else {
+      const newResult = {
+        label: "Normal Breath Sound",
+        confidence: 92
+      };
+      setResult(newResult);
+      onNewResult(newResult);
+    }
+  }, 2000);
+};
 
   return (
     <>

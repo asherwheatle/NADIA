@@ -33,6 +33,26 @@ h1, h2, h3 {
 }
 
 /* ---------------------------------------------------
+   GLOBAL PREMIUM FADE-IN
+--------------------------------------------------- */
+@keyframes fadeInPremium {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInPremium 0.9s ease-out forwards;
+}
+
+/* ---------------------------------------------------
    BODY + DARK MODE
 --------------------------------------------------- */
 body {
@@ -115,13 +135,8 @@ body.dark-mode .btn-toggle {
 /* ---------------------------------------------------
    PAGE FADE-IN
 --------------------------------------------------- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .app-container {
-  animation: fadeIn 0.9s ease-out;
+  animation: fadeInPremium 0.9s ease-out;
   max-width: 600px;
   margin: auto;
   padding: 40px 20px;
@@ -142,7 +157,6 @@ body.dark-mode .btn-toggle {
   box-shadow: 0 0 35px rgba(255,255,255,0.25);
 }
 
-/* Sphere turns red while recording */
 .breath-circle.recording {
   background: radial-gradient(circle, #FF6B6B, #C94A4A);
   box-shadow: 0 0 45px rgba(255, 80, 80, 0.6);
@@ -154,7 +168,6 @@ body.dark-mode .btn-toggle {
   100% { transform: scale(0.85); opacity: 0.75; }
 }
 
-/* Glowing aura behind the sphere */
 .breath-circle::before {
   content: "";
   position: absolute;
@@ -316,7 +329,7 @@ body.dark-mode .recording-bar {
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 8px 32px rgba(0,0,0,0.15);
   color: #2F3E2C;
-  animation: fadeIn 1.2s ease-out;
+  animation: fadeInPremium 1.2s ease-out;
 }
 
 body.dark-mode .glass-card {
@@ -372,7 +385,7 @@ body.dark-mode .glass-card {
 }
 
 /* ---------------------------------------------------
-   UPLOAD BUTTON
+   UPLOAD BUTTON + DROP ZONE
 --------------------------------------------------- */
 .upload-container {
   margin-top: 20px;
@@ -426,6 +439,9 @@ body.dark-mode .drop-zone {
   border-color: rgba(255,255,255,0.25);
 }
 
+/* ---------------------------------------------------
+   MODAL (RESULTS + RESOURCE PREVIEW)
+--------------------------------------------------- */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -449,7 +465,7 @@ body.dark-mode .drop-zone {
   max-width: 450px;
   color: #2F3E2C;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  animation: fadeIn 0.25s ease;
+  animation: fadeInPremium 0.25s ease;
 }
 
 .close-btn,
@@ -474,4 +490,215 @@ body.dark-mode .drop-zone {
   opacity: 0.75;
   line-height: 1.4;
   font-style: italic;
+}
+
+.embedded-resource {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 12px;
+  margin-top: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.embedded-resource.visible {
+  opacity: 1;
+}
+
+.embedded-resource.hidden {
+  opacity: 0;
+}
+
+@media (max-width: 600px) {
+  .embedded-resource {
+    height: 350px;
+  }
+}
+
+.resource-preview-title {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2F3E2C;
+}
+
+.view-full-resource-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(8px);
+  color: #2F3E2C;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.25s ease;
+}
+
+.view-full-resource-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+.iframe-shimmer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  margin-top: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.1) 0%,
+    rgba(255,255,255,0.25) 50%,
+    rgba(255,255,255,0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---------------------------------------------------
+   FLOATING HISTORY DRAWER (CLEANED + MERGED)
+--------------------------------------------------- */
+.history-toggle-btn {
+  position: fixed;
+  top: 120px;
+  left: 20px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  transition: 0.25s ease;
+}
+
+.history-toggle-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* Drawer container */
+/* Drawer container */
+.history-floating {
+  position: fixed;
+  top: 120px;
+  left: -300px; /* hidden by default */
+  width: 260px;
+  transition: left 0.35s ease;
+  z-index: 900;
+  animation: fadeInPremium 0.8s ease-out;
+}
+
+.history-floating.open {
+  left: 20px; /* slides in */
+}
+
+/* Panel content */
+.history-panel {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Clear history button */
+.clear-history-btn {
+  margin-bottom: 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.clear-history-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* History list */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.history-item:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* Delete individual entry */
+.delete-entry-btn {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.delete-entry-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* Confirmation modal */
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+  animation: fadeInPremium 0.3s ease-out;
+}
+
+.confirm-box {
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  width: 300px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  animation: fadeInPremium 0.35s ease-out;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.confirm-btn,
+.cancel-btn {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+  background: rgba(255,255,255,0.25);
+}
+
+.confirm-btn:hover,
+.cancel-btn:hover {
+  background: rgba(255,255,255,0.4);
 }
