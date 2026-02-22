@@ -1,16 +1,9 @@
-import RecordingWaveform from "../components/RecordingWaveform.jsx";
-import WaveformVisualizer from "../components/WaveFormVisualizer.jsx";
-import BreathingCircle from "../components/BreathingCircle.jsx";
-import RecordButton from "../components/RecordButton.jsx";
-import SubmitButton from "../components/SubmitButton.jsx";
-import ResultsCard from "../components/ResultsCard.jsx";
-import Loading from "../components/Loading.jsx";
-import FloatingMic from "../components/Floating_Mic.jsx";
-import UploadInput from "../components/UploadInput.jsx";
-import DragDropUpload from "../components/DragDropUpload.jsx";
-import useDecibelMeter from "../hooks/useDecibelMeter.js";
-import { normalizeAudio } from "../utils/audioUtils.js";
 import { useState } from "react";
+import UploadBox from "../components/UploadBox.jsx";
+import SubmitButton from "../components/SubmitButton.jsx";
+import Loading from "../components/Loading.jsx";
+import ResultsCard from "../components/ResultsCard.jsx";
+import { normalizeAudio } from "../utils/audioUtils.js";
 
 function formatHistoryEntry(result) {
   const raw = result.confidence;
@@ -31,111 +24,51 @@ function formatHistoryEntry(result) {
 }
 
 export default function Record({ onNewResult }) {
-  const [listening, setListening] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [showDropZone, setShowDropZone] = useState(false);
-  const [savedAnimation, setSavedAnimation] = useState(false);
-
-  const db = useDecibelMeter(listening);
-
-  // -----------------------------
-  // MICROPHONE RECORDING LOGIC
-  // -----------------------------
-  let mediaRecorder;
-  let chunks = [];
-
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false,
-      },
-    });
-
-    // eslint-disable-next-line react-hooks/immutability
-    mediaRecorder = new MediaRecorder(stream);
-    chunks = [];
-
-    mediaRecorder.ondataavailable = (e) => {
-      chunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: "audio/webm" });
-      window.recordedBlob = blob;
-
-      // Trigger "Recording Saved" animation
-      setSavedAnimation(true);
-      setTimeout(() => setSavedAnimation(false), 1200);
-    };
-
-    mediaRecorder.start();
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-    }
-  };
+  const [progress, setProgress] = useState(0);
 
   // -----------------------------
   // FILE UPLOAD HANDLER
   // -----------------------------
   const handleUpload = async (file) => {
+    setProgress(10);
+
     const normalizedFile = await normalizeAudio(file);
-    setUploadedFile(normalizedFile);
-    setListening(false);
-    setResult(null);
-    setShowDropZone(false);
-  };
+    setProgress(60);
 
-  // -----------------------------
-  // LISTENING TOGGLE
-  // -----------------------------
-  const toggleListening = () => {
-    if (!listening) {
-      startRecording();
-    } else {
-      stopRecording();
-    }
+    setUploadedFile({
+      original: file,
+      normalized: normalizedFile,
+    });
 
-    setListening(!listening);
+    setProgress(100);
     setResult(null);
   };
 
   // -----------------------------
-  // RESET
+  // REPLACE FILE
   // -----------------------------
-  const handleReset = () => {
-    setResult(null);
+  const handleReplace = () => {
     setUploadedFile(null);
-    window.recordedBlob = null;
-    setShowDropZone(false);
-    setListening(false);
-    setLoading(false);
+    setProgress(0);
+    setResult(null);
   };
 
   // -----------------------------
   // SUBMIT TO BACKEND
   // -----------------------------
   const handleSubmit = async () => {
-    setListening(false);
+    if (!uploadedFile) return;
+
     setLoading(true);
     setResult(null);
+    setProgress(80);
 
     try {
       const formData = new FormData();
-
-      if (uploadedFile) {
-        formData.append("file", uploadedFile, "uploaded_audio.wav");
-      }
-
-      if (!uploadedFile && window.recordedBlob) {
-        formData.append("file", window.recordedBlob, "recorded_audio.webm");
-      }
+      formData.append("file", uploadedFile.normalized, "uploaded_audio.wav");
 
       const res = await fetch("http://localhost:8000/predict", {
         method: "POST",
@@ -161,36 +94,32 @@ export default function Record({ onNewResult }) {
     setLoading(false);
   };
 
+  // -----------------------------
+  // RESET
+  // -----------------------------
+  const handleReset = () => {
+    setResult(null);
+    setUploadedFile(null);
+    setProgress(0);
+    setLoading(false);
+  };
+
   return (
     <>
-      <BreathingCircle recording={listening} db={db}>
-        <FloatingMic listening={listening} onToggle={toggleListening} />
-      </BreathingCircle>
-
-      {/* RECORDING SAVED BADGE */}
-      {savedAnimation && (
-        <div className="recording-saved-badge">
-          Recording Saved
-        </div>
-      )}
-
-      <UploadInput
+      <UploadBox
         onUpload={handleUpload}
-        onClick={() => setShowDropZone(true)}
-        onCancel={() => setShowDropZone(false)}
+        onReplace={handleReplace}
+        file={uploadedFile}
+        progress={progress}
       />
 
-      {showDropZone && <DragDropUpload onUpload={handleUpload} />}
-
-      <WaveformVisualizer listening={listening} db={db} />
-
-      <RecordButton listening={listening} onToggle={toggleListening} />
       <SubmitButton
-        disabled={!listening && !uploadedFile}
+        disabled={!uploadedFile}
         onSubmit={handleSubmit}
       />
 
       {loading && <Loading />}
+
       {result && !loading && (
         <ResultsCard
           result={result}
@@ -200,3 +129,4 @@ export default function Record({ onNewResult }) {
     </>
   );
 }
+

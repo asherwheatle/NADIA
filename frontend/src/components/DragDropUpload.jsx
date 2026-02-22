@@ -5,6 +5,7 @@ export default function DragDropUpload({ onUpload }) {
 
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragging(false);
 
     const file = e.dataTransfer.files[0];
@@ -16,9 +17,19 @@ export default function DragDropUpload({ onUpload }) {
       className={`drop-zone ${dragging ? "dragging" : ""}`}
       onDragOver={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         setDragging(true);
       }}
-      onDragLeave={() => setDragging(false)}
+      onDragEnter={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragging(true);
+      }}
+      onDragLeave={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragging(false);
+      }}
       onDrop={handleDrop}
     >
       <p>Drag & Drop Audio/Video Here</p>

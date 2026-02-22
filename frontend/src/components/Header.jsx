@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import logoImg from "../assets/nadia-logo.png";
 
 export default function Header({ darkMode, setDarkMode }) {
   useEffect(() => {
@@ -15,7 +16,10 @@ export default function Header({ darkMode, setDarkMode }) {
       </button>
 
       <header className="header fade-in">
+        <img src={logoImg} alt="NADIA Logo" className="logo-img" />
+
         <h1 className="logo">NADIA</h1>
+        <h3 className="tagline">Your AI-Powered Audio Doctor</h3>
       </header>
     </>
   );
