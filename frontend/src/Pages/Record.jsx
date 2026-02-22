@@ -26,7 +26,7 @@ export default function Record({ onNewResult }) {
     setUploadedFile(normalizedFile);
     setListening(false);
     setResult(null);
-    setShowDropZone(false); // hide again
+    setShowDropZone(false);
   };
 
   const toggleListening = () => {
@@ -34,30 +34,57 @@ export default function Record({ onNewResult }) {
     setResult(null);
   };
 
-const handleSubmit = () => {
+  const handleReset = () => {
+  setResult(null);
+  setUploadedFile(null);
+  window.recordedBlob = null;
+  setShowDropZone(false);
+  setListening(false);
+  setLoading(false);
+};
+
+  // -----------------------------
+  // REAL BACKEND SUBMIT FUNCTION
+  // -----------------------------
+const handleSubmit = async () => {
   setListening(false);
   setLoading(true);
   setResult(null);
 
-  setTimeout(() => {
-    setLoading(false);
+  try {
+    const formData = new FormData();
 
+    // If user uploaded a file
     if (uploadedFile) {
-      const newResult = {
-        label: "Uploaded File Analyzed",
-        confidence: 88
-      };
-      setResult(newResult);
-      onNewResult(newResult);
-    } else {
-      const newResult = {
-        label: "Normal Breath Sound",
-        confidence: 92
-      };
-      setResult(newResult);
-      onNewResult(newResult);
+      formData.append("file", uploadedFile, "uploaded_audio.wav");
     }
-  }, 2000);
+
+    // If user recorded audio
+    if (!uploadedFile && window.recordedBlob) {
+      formData.append("file", window.recordedBlob, "recorded_audio.wav");
+    }
+
+    const res = await fetch("http://localhost:8000/predict", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    const newResult = {
+      label: data.label,
+      confidence: data.confidence,
+      image: data.image,
+    };
+
+    setResult(newResult);
+    onNewResult(newResult);
+
+  } catch (err) {
+    console.error("Prediction error:", err);
+  }
+
+  setLoading(false);
 };
 
   return (
@@ -66,24 +93,30 @@ const handleSubmit = () => {
         <FloatingMic listening={listening} onToggle={toggleListening} />
       </BreathingCircle>
 
-      <UploadInput 
-    onUpload={handleUpload}
-    onClick={() => setShowDropZone(true)}
-    onCancel={() => setShowDropZone(false)}
+      <UploadInput
+        onUpload={handleUpload}
+        onClick={() => setShowDropZone(true)}
+        onCancel={() => setShowDropZone(false)}
       />
 
-      {showDropZone && (
-        <DragDropUpload onUpload={handleUpload} />
-      )}
+      {showDropZone && <DragDropUpload onUpload={handleUpload} />}
 
       <RecordingWaveform listening={listening} />
       <WaveformVisualizer listening={listening} />
 
       <RecordButton listening={listening} onToggle={toggleListening} />
-      <SubmitButton disabled={!listening && !uploadedFile} onSubmit={handleSubmit} />
+      <SubmitButton
+        disabled={!listening && !uploadedFile}
+        onSubmit={handleSubmit}
+      />
 
       {loading && <Loading />}
-      {result && !loading && <ResultsCard result={result} />}
+      {result && !loading && (
+        <ResultsCard 
+          result={result}
+          onReset={handleReset}
+        />
+        )}
     </>
   );
 }
