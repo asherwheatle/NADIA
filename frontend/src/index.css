@@ -99,6 +99,44 @@ body.dark-mode {
   color: var(--text-main);
 }
 
+/* Row layout for logo + title */
+.logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+/* Logo image */
+.logo-img {
+  width: 70px;
+  height: auto;
+  display: block;
+  opacity: 0.95;
+  animation: fadeInPremium 1.2s ease-out forwards;
+  mix-blend-mode: multiply; /* optional */
+}
+
+body.dark-mode .logo-img {
+  opacity: 0.9;
+  mix-blend-mode: screen; /* optional */
+}
+
+/* Breathing title */
+.logo {
+  font-size: 4.2rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin: 0;
+  animation: breatheText 7.5s ease-in-out infinite;
+  color: var(--text-main);
+}
+
+body.dark-mode .logo {
+  color: var(--text-main-dark);
+}
+
 @keyframes breatheText {
   0%   { letter-spacing: 2px; opacity: 0.82; transform: scale(0.97); }
   50%  { letter-spacing: 6px; opacity: 1;    transform: scale(1.03); }
@@ -1007,6 +1045,14 @@ body.dark-mode .file-size {
   height: 100%;
   background: #4caf50;
   transition: width 0.25s ease;
+}
+
+.progress-container {
+  transition: opacity 0.3s ease;
+}
+
+.progress-container.hidden {
+  opacity: 0;
 }
 
 /* Replace Button */

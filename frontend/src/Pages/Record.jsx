@@ -44,6 +44,11 @@ export default function Record({ onNewResult }) {
     });
 
     setProgress(100);
+
+    setTimeout(() => {
+      setProgress(0);
+    }, 500);
+
     setResult(null);
   };
 
@@ -60,39 +65,47 @@ export default function Record({ onNewResult }) {
   // SUBMIT TO BACKEND
   // -----------------------------
   const handleSubmit = async () => {
-    if (!uploadedFile) return;
+  if (!uploadedFile) return;
 
-    setLoading(true);
-    setResult(null);
-    setProgress(80);
+  setLoading(true);
+  setResult(null);
+  setProgress(80);
 
-    try {
-      const formData = new FormData();
-      formData.append("file", uploadedFile.normalized, "uploaded_audio.wav");
+  try {
+    const formData = new FormData();
+    formData.append("file", uploadedFile.normalized, "uploaded_audio.wav");
 
-      const res = await fetch("http://localhost:8000/predict", {
-        method: "POST",
-        body: formData,
-      });
+    const res = await fetch("http://localhost:8000/predict", {
+      method: "POST",
+      body: formData,
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      const newResult = {
-        label: data.label,
-        confidence: data.confidence,
-        image: data.image,
-      };
+    const newResult = {
+      label: data.label,
+      confidence: data.confidence,
+      image: data.image,
+    };
 
-      const formatted = formatHistoryEntry(newResult);
-      setResult(formatted);
-      onNewResult(formatted);
+    const formatted = formatHistoryEntry(newResult);
+    setResult(formatted);
+    onNewResult(formatted);
 
-    } catch (err) {
-      console.error("Prediction error:", err);
-    }
+  } catch (err) {
+    console.error("Prediction error:", err);
+  }
 
-    setLoading(false);
-  };
+  // ⭐ Mark submit as complete
+  setProgress(100);
+
+  // ⭐ Hide bar after a moment
+  setTimeout(() => {
+    setProgress(0);
+  }, 500);
+
+  setLoading(false);
+};
 
   // -----------------------------
   // RESET
