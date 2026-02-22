@@ -6,15 +6,17 @@ export default function Header({ darkMode, setDarkMode }) {
   }, [darkMode]);
 
   return (
-    <header className="header">
-      <h1 className="logo">Breathe</h1>
-
+    <>
       <button
-        className="btn btn-toggle interactive"
+        className="btn btn-toggle interactive fade-in"
         onClick={() => setDarkMode(!darkMode)}
       >
         {darkMode ? "Light Mode" : "Dark Mode"}
       </button>
-    </header>
+
+      <header className="header fade-in">
+        <h1 className="logo">NADIA</h1>
+      </header>
+    </>
   );
 }
