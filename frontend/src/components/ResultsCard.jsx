@@ -9,7 +9,7 @@ export default function ResultsCard({ result, onReset }) {
     <>
       <div className="results-card">
         <h2>{result.label}</h2>
-        <p>Confidence: {Math.round(result.confidence * 100)}%</p>
+        <p><p>Confidence: {result.confidenceDisplay}</p></p>
 
         {result.image && (
           <>

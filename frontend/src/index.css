@@ -685,6 +685,18 @@ body.dark-mode .clear-history-btn {
   margin: 0;
 }
 
+.history-label {
+  margin-right: 8px;
+}
+
+.history-text {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 3px;
+}
+
 .history-item {
   display: flex;
   justify-content: space-between;
@@ -841,4 +853,38 @@ body.dark-mode .reset-btn-floating {
 .reset-btn-floating:hover {
   background: rgba(255,255,255,0.4);
   transform: translateY(-3px);
+}
+
+.recording-saved-badge {
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  background: rgba(126, 160, 132, 0.25);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  color: #4a5f4d;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  animation: savedFade 1.2s ease-out forwards;
+}
+
+@keyframes savedFade {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px) scale(0.95);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.98);
+  }
 }

@@ -1,47 +1,55 @@
 import { useEffect, useState } from "react";
 
-export default function useDecibelMeter(listening) {
-  const [db, setDb] = useState(0);
+export default function useDecibelMeter(stream, listening) {
+  const [level, setLevel] = useState(0);
 
   useEffect(() => {
-    if (!listening) return;
+    if (!stream || !listening) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLevel(0);
+      return;
+    }
 
-    let audioContext;
-    let analyser;
-    let source;
+    const audioContext = new AudioContext();
+    // eslint-disable-next-line no-unused-vars
+    const source = audioContext.createMediaStreamSource(stream);
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      audioContext = new AudioContext();
-      source = audioContext.createMediaStreamSource(stream);
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 256;
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 1024;
 
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-      source.connect(analyser);
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
-      const update = () => {
-        analyser.getByteTimeDomainData(dataArray);
+    const sampleRate = audioContext.sampleRate;
+    const binSize = sampleRate / analyser.fftSize;
 
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          const val = (dataArray[i] - 128) / 128;
-          sum += val * val;
-        }
+    // Speech band: 60 Hz → 6000 Hz
+    const startBin = Math.floor(60 / binSize);
+    const endBin = Math.floor(6000 / binSize);
 
-        const rms = Math.sqrt(sum / dataArray.length);
-        const decibels = 20 * Math.log10(rms || 0.00001);
+    let rafId;
 
-        setDb(Math.max(-60, decibels)); // clamp to avoid -Infinity
-        requestAnimationFrame(update);
-      };
+    const update = () => {
+      analyser.getByteFrequencyData(dataArray);
 
-      update();
-    });
+      const speechBins = dataArray.slice(startBin, endBin);
+      const peak = Math.max(...speechBins);
+
+      // Normalize 0–255 → 0–100
+      const normalized = (peak / 255) * 100;
+
+      // Smooth
+      setLevel((prev) => prev * 0.6 + normalized * 0.4);
+
+      rafId = requestAnimationFrame(update);
+    };
+
+    update();
 
     return () => {
-      if (audioContext) audioContext.close();
+      cancelAnimationFrame(rafId);
+      audioContext.close();
     };
-  }, [listening]);
+  }, [stream, listening]);
 
-  return db;
+  return level;
 }

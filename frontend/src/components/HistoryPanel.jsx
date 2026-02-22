@@ -28,7 +28,7 @@ export default function HistoryPanel({ history, setHistory }) {
             <li key={index} className="history-item interactive">
               <div className="history-text">
                 <strong>{item.label}</strong>
-                <span>{item.confidence}%</span>
+                <span>{item.confidenceDisplay}</span>
               </div>
 
               {/* Individual delete button */}
